@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    #stopwatch {
+      text-align: center;
+    }
+
+    #controls {
+      margin-top: 20px;
+    }
+
+    button {
+      font-size: 16px;
+      margin: 0 10px;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div id="stopwatch">
+    <h1 id="display">00:00:00</h1>
+    <div id="controls">
+      <button onclick="startStopwatch()">Start</button>
+      <button onclick="pauseStopwatch()">Pause</button>
+      <button onclick="resetStopwatch()">Reset</button>
+      <button onclick="recordLap()">Lap</button>
+    </div>
+    <ul id="lapTimes"></ul>
+  </div>
+
+  <script>
+    let timer;
+    let isRunning = false;
+    let seconds = 0;
+    let lapTimes = [];
+    
+    function startStopwatch() {
+      if (!isRunning) {
+        timer = setInterval(updateStopwatch, 1000);
+        isRunning = true;
+      }
+    }
+
+    function pauseStopwatch() {
+      clearInterval(timer);
+      isRunning = false;
+    }
+
+    function resetStopwatch() {
+      clearInterval(timer);
+      isRunning = false;
+      seconds = 0;
+      lapTimes = [];
+      updateDisplay();
+      updateLapTimes();
+    }
+
+    function recordLap() {
+      if (isRunning) {
+        lapTimes.push(formatTime(seconds));
+        updateLapTimes();
+      }
+    }
+
+    function updateStopwatch() {
+      seconds++;
+      updateDisplay();
+    }
+
+    function updateDisplay() {
+      document.getElementById('display').textContent = formatTime(seconds);
+    }
+
+    function updateLapTimes() {
+      const lapTimesElement = document.getElementById('lapTimes');
+      lapTimesElement.innerHTML = '';
+
+      lapTimes.forEach((lapTime, index) => {
+        const li = document.createElement('li');
+        li.textContent = `Lap ${index + 1}: ${lapTime}`;
+        lapTimesElement.appendChild(li);
+      });
+    }
+
+    function formatTime(totalSeconds) {
+      const hours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+
+      return `${padZero(hours)}:${padZero(minutes)}:${padZero(seconds)}`;
+    }
+
+    function padZero(number) {
+      return number.toString().padStart(2, '0');
+    }
+  </script>
+</body>
+</html>
